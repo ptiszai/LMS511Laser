@@ -1,0 +1,157 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{1D04140C-4D06-4FF5-A707-0D5EB6DFB2AC}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Brace.Shared.DeviceDrivers.LMS511Laser</RootNamespace>
+    <AssemblyName>Shared.DeviceDrivers.LMS511Laser</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>
+    </DocumentationFile>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Brace.Shared.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Shared.SharedClasses">
+      <HintPath>..\..\..\SharedClasses\bin\x86\Debug\Shared.SharedClasses.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\..\inc\GlobalAssemblyInfo.cs">
+      <Link>GlobalAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Commands\DeviceIdent.cs" />
+    <Compile Include="Commands\LCMstate.cs" />
+    <Compile Include="Commands\LIDoutputstate.cs" />
+    <Compile Include="Commands\LIDrstoutpcnt.cs" />
+    <Compile Include="Commands\LMDscandata.cs" />
+    <Compile Include="Commands\LMPscancfg.cs" />
+    <Compile Include="Commands\LSPsetdatetime.cs" />
+    <Compile Include="Commands\mDOSetOutput.cs" />
+    <Compile Include="Commands\mLMPsetscancfg.cs" />
+    <Compile Include="Commands\mSCreboot.cs" />
+    <Compile Include="Commands\Run.cs" />
+    <Compile Include="Commands\SCdevicestate.cs" />
+    <Compile Include="Commands\SetAccessMode.cs" />
+    <Compile Include="Commands\STlms.cs" />
+    <Compile Include="Driver.cs" />
+    <Compile Include="DriverFactory.cs" />
+    <Compile Include="Enums\CommandType.cs" />
+    <Compile Include="Enums\StartStopEnum.cs" />
+    <Compile Include="Enums\StatusEnum.cs" />
+    <Compile Include="ErrorStateCounter.cs" />
+    <Compile Include="EventHandlers\CommandEventArgs.cs" />
+    <Compile Include="EventHandlers\DeviceIdentEventArgs.cs" />
+    <Compile Include="EventHandlers\LCMstateEventArgs.cs" />
+    <Compile Include="EventHandlers\LIDoutputstateEventArgs.cs" />
+    <Compile Include="EventHandlers\LIDrstoutpcnEventArgs.cs" />
+    <Compile Include="EventHandlers\LMDscandataEEventArgs.cs" />
+    <Compile Include="EventHandlers\LMDscandataEventArgs.cs" />
+    <Compile Include="EventHandlers\LSPsetdatetimeEventArgs.cs" />
+    <Compile Include="EventHandlers\mDOSetOutputEventArgs.cs" />
+    <Compile Include="EventHandlers\MonitorAttribute.cs" />
+    <Compile Include="EventHandlers\mSCrebootEventArgs.cs" />
+    <Compile Include="EventHandlers\RunEventArgs.cs" />
+    <Compile Include="EventHandlers\SCdevicestateEventArgs.cs" />
+    <Compile Include="EventHandlers\SetAccessModeEventArgs.cs" />
+    <Compile Include="EventHandlers\SopasErrorEventArgs.cs" />
+    <Compile Include="EventHandlers\STlmsEventArgs.cs" />
+    <Compile Include="Helpers\DebugClass.cs" />
+    <Compile Include="Helpers\FunctHelper.cs" />
+    <Compile Include="Interfaces\ILaser.cs" />
+    <Compile Include="LaserConfig.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="ScanCfg.cs" />
+    <Compile Include="TelegramsOperating.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Core\Core.csproj">
+      <Project>{7c548b2d-1252-498e-a128-e41d44af05f8}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Diagnostics\Trace\Trace.csproj">
+      <Project>{c3f8ae1a-91eb-4512-b61d-e1b4e652ab1e}</Project>
+      <Name>Trace</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\inc\Candid.Shared.snk">
+      <Link>Candid.Shared.snk</Link>
+    </None>
+    <None Include="app.config" />
+    <None Include="Brace.Shared.snk" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
