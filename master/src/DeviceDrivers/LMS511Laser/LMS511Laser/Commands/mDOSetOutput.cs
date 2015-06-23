@@ -50,10 +50,6 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser.Commands
         /// </summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 13)]
         public byte[] cmd;
-        /// <summary>
-        /// space : 0x20         
-        /// </summary>
-        public byte sp0;
         /// <summary>        
         ///  Output Number    
         /// </summary>
@@ -127,8 +123,7 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser.Commands
             sTemp = "sMN ";
             _data.type = encoding.GetBytes(sTemp);
             sTemp = "mDOSetOutput ";          
-            _data.cmd = encoding.GetBytes(sTemp);
-            _data.sp0 = 0x20;
+            _data.cmd = encoding.GetBytes(sTemp);           
             _data.outputNumber = (byte)(oportNum + 0x30);
             _data.sp1 = 0x20;
             _data.outputState = (byte)(oportStatus + 0x30);

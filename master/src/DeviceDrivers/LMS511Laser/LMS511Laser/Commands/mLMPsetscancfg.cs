@@ -48,7 +48,7 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser.Commands
         ///  command    
         /// </summary>
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 15)]
-        public byte[] cmd;
+        public byte[] cmd;     
         /// <summary>
         /// Scan Frequency 
         /// [1/100Hz]
@@ -58,7 +58,7 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser.Commands
         /// <summary>
         /// space : 0x20         
         /// </summary>
-        public byte sp0;
+        public byte sp1;
         /// <summary>
         /// not used        
         /// </summary>
@@ -67,7 +67,7 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser.Commands
         /// <summary>
         /// space : 0x20         
         /// </summary>
-        public byte sp1;
+        public byte sp2;
         /// <summary>
         /// Angle Resolution
         /// [1/10000°]        
@@ -77,7 +77,7 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser.Commands
         /// <summary>
         /// space : 0x20        
         /// </summary>
-        public byte sp2;
+        public byte sp3;
         /// <summary>
         /// Start Angle
         /// [1/10000°]    
@@ -88,7 +88,7 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser.Commands
         /// <summary>
         /// space : 0x20        
         /// </summary>
-        public byte sp3;
+        public byte sp4;
         /// <summary>
         /// Stop Angle
         /// [1/10000°]    
@@ -110,14 +110,16 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser.Commands
     {
         /// <summary>
         /// Status Code
+        /// </summary>
+        /// <remarks>
         /// 0 no Error
         /// 1 Frequency Error
         /// 2 Resolution Error
         /// 3 Res. and Scn. Error
         /// 4 Scan area Error
         /// 5 other Errors        
-        /// </summary>
-        public int statusCode;
+        /// </remarks> 
+        public SetscancfgEnum statusCode;
         /// <summary>
         /// Scan Frequency 
         /// [1/100Hz]
@@ -181,16 +183,16 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser.Commands
             _data.stx = 0x02;
             sTemp = "sMN ";
             _data.type = encoding.GetBytes(sTemp);
-            sTemp = "mLMPsetscancfg ";
+            sTemp = "mLMPsetscancfg ";            
             _data.cmd = encoding.GetBytes(sTemp);
             _data.scan_frequency = FunctHelper.ConvertUintToHexByteArray(scancfg.scan_frequency);
-            _data.sp0 = 0x20;
-            _data.value = FunctHelper.ConvertShortToHexByteArray(1);
             _data.sp1 = 0x20;
-            _data.angle_resolution = FunctHelper.ConvertUintToHexByteArray(scancfg.angle_resolution);
+            _data.value = FunctHelper.ConvertShortToHexByteArray(1);
             _data.sp2 = 0x20;
-            _data.start_angle = FunctHelper.ConvertIntToHexByteArray(scancfg.start_angle);
+            _data.angle_resolution = FunctHelper.ConvertUintToHexByteArray(scancfg.angle_resolution);
             _data.sp3 = 0x20;
+            _data.start_angle = FunctHelper.ConvertIntToHexByteArray(scancfg.start_angle);
+            _data.sp4 = 0x20;
             _data.stop_angle = FunctHelper.ConvertIntToHexByteArray(scancfg.stop_angle);
             _data.etx = 0x03;
         }

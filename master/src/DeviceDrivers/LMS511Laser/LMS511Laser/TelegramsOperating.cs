@@ -115,17 +115,24 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser
         ///mSCrebootEventArgs responde event
         /// </summary>
         public event EventHandler<mSCrebootEventArgs> mSCreboot_CMD;
+        /// <summary>
+        /// mLMPsetscancfgEventArgs responde event
+        /// </summary>
+        public event EventHandler<mLMPsetscancfgEventArgs> mLMPsetscancfg_CMD;
+        /// <summary>
+        /// LMDscandatacfgEventArgs responde event
+        /// </summary>
+        public event EventHandler<LMDscandatacfgEventArgs> LMDscandatacfg_CMD;
 
         /* ELKESZULT ELEMEK, KESOBB RAKOM BE, JELENLEG NEM KELL!
         /// <summary>
         /// STlms responde event
         /// </summary>     
-        public event EventHandler<STlmsEventArgs> STlms_CMD;
-        public event Action<mLMPsetscancfg_R> mLMPsetscancfg_CMD;
+        public event EventHandler<STlmsEventArgs> STlms_CMD;       
         public event Action<LMPscancfg_R> LMPscancfg_CMD;
         public event Action<LMPoutputRange_R> LMPoutputRange_CMD;
         public event Action<LMPoutputRange_get_R> LMPoutputRange_get_CMD;                    
-        public event Action<LMDscandata_R> LMDscandata_CMD;*/
+       */
         #endregion
 
         #region Variable property
@@ -212,8 +219,8 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser
                // Console.WriteLine("read buffer: " + sTemp);
                
                 _rdatas = SeparatedToByteArray(truncArray, 0x20);
-          /*      ii = 0;              
-                foreach (byte[] data in _rdatas)
+                ii = 0;              
+               /* foreach (byte[] data in _rdatas)
                 {
                     Console.WriteLine("data " + ii.ToString() + ": " + FunctHelper.Print_byteArray_Hex_ASCII(data));
                     ii++;
@@ -378,7 +385,7 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser
                 }
 
                 // mLMPsetscancfg
-          /*      pattern = encoding.GetBytes("mLMPsetscancfg");
+                pattern = encoding.GetBytes("mLMPsetscancfg");
                 if (BytePatternSearch(_rdatas[1], pattern, 0) >= 0)
                 { // mLMPsetscancfg
                     pattern = encoding.GetBytes("sAN");
@@ -387,15 +394,16 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser
                         if (mLMPsetscancfg_CMD != null)
                         {
                             _rbuffer[readBytes - 1] = 0x0;
-                            mLMPsetscancfg_R s = new mLMPsetscancfg_R();
-                            parser_rbuffer_to_mLMPsetscancfg_R(ref s);
-                            mLMPsetscancfg_CMD(s);
-                            continue;
+                            mLMPsetscancfg_R sc = new mLMPsetscancfg_R();
+                            parser_rbuffer_to_mLMPsetscancfg_R(ref sc);
+                            mLMPsetscancfgEventArgs s = new mLMPsetscancfgEventArgs(sc);
+                            mLMPsetscancfg_CMD(this, s);
+                            continue;                         
                         }
                     }
                     else
                         throw new Exception("ERROR Laser: rec:mLMPsetscancfg is bad!");
-                }*/
+                }
 
                 // LMPscancfg
           /*      pattern = encoding.GetBytes("LMPscancfg");
@@ -579,6 +587,24 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser
                     // else
                     //    throw new Exception("ERROR Laser: rec:DeviceIdent is bad 1!");
                 }
+                // LMDscandatacfg
+                pattern = encoding.GetBytes("LMDscandatacfg");
+                if (BytePatternSearch(_rdatas[1], pattern, 0) >= 0)
+                { // LMDscandatacfg
+                    pattern = encoding.GetBytes("sWA");
+                    if (BytePatternSearch(_rdatas[0], pattern, 0) >= 0)
+                    {
+                        if (LMDscandatacfg_CMD != null)
+                        {
+                            LMDscandatacfgEventArgs s = new LMDscandatacfgEventArgs(1);
+                            LMDscandatacfg_CMD(this, s);
+                            continue;
+                        }
+                    }
+                    else
+                        throw new Exception("ERROR Laser: rec:LMDscandatacfg is bad!");
+                }
+
                 // STlms, kesobb
               /*  pattern = encoding.GetBytes("STlms");
                 if (BytePatternSearch(_rdatas[1], pattern, 0) >= 0)
@@ -753,7 +779,7 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser
          private void parser_rbuffer_to_mLMPsetscancfg_R(ref mLMPsetscancfg_R data)
          {
              byte[] bdata;
-             data.statusCode = (int)FunctHelper.ASCIItoByteOne(_rdatas[2][0]);
+             data.statusCode = (SetscancfgEnum)FunctHelper.ASCIItoByteOne(_rdatas[2][0]);
              bdata = FunctHelper.ASCIItoByte(_rdatas[3]);
              data.scan_frequency = FunctHelper.ConvertToUint(bdata);
              bdata = FunctHelper.ASCIItoByte(_rdatas[4]);
@@ -1067,6 +1093,18 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser
                         sbuffer = SerializeMessage<mSCreboot>((mSCreboot)propertyInfo.GetValue(cmd, null));
                         break;
                     }
+                    else
+                    if ((propertyInfo.PropertyType == typeof(mLMPsetscancfg)) && (type == CommandType.mLMPsetscancfg))
+                    {
+                        sbuffer = SerializeMessage<mLMPsetscancfg>((mLMPsetscancfg)propertyInfo.GetValue(cmd, null));
+                        break;
+                    }
+                    else
+                    if ((propertyInfo.PropertyType == typeof(LMDscandatacfg)) && (type == CommandType.LMDscandatacfg))
+                    {
+                        sbuffer = SerializeMessage<LMDscandatacfg>((LMDscandatacfg)propertyInfo.GetValue(cmd, null));
+                        break;
+                    }
                     /* if ((propertyInfo.PropertyType == typeof(LMPoutputRange)) && (type == CommandType.LMPoutputRange))
                      {
                          sbuffer = SerializeMessage<LMPoutputRange>((LMPoutputRange)propertyInfo.GetValue(cmd, null));
@@ -1081,7 +1119,7 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser
                      else*/        
                 }
               //  Console.WriteLine("send buffer: " + FunctHelper.Print_byteArray_Hex_ASCII(sbuffer));
-            //    _traceWrapper.WriteInformation("TelegramsOperating: send buffer: " + FunctHelper.Print_byteArray_Hex_ASCII(sbuffer));
+                _traceWrapper.WriteInformation("TelegramsOperating: send buffer: " + FunctHelper.Print_byteArray_Hex_ASCII(sbuffer));
                 _semaphor.WaitOne();
                 networkStream.Write(sbuffer, 0, sbuffer.Length);
                 networkStream.Flush();

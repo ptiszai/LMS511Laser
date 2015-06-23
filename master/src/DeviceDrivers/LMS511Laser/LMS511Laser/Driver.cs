@@ -13,7 +13,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.*/
-
+//mEEwriteall,LMCstartmeas,LMCstopmeas, LMLfpFcn,mSCloadfacdef
 //#define SCAN_TEST
 namespace Brace.Shared.DeviceDrivers.LMS511Laser
 {
@@ -53,6 +53,18 @@ using Brace.Shared.DeviceDrivers.LMS511Laser.Interfaces;
         private ushort _maskDigitalOutputs; 
         private int _oportNum;
         private int _oportStatus;
+        private ScanCfg _scancfg;
+        private DateTime _setdatetime;
+        private short _outputchannel;
+        private int _remission;
+        private int _resolution;
+        private int _unit;
+        private short _encoder;
+        private short _position;
+        private short _device_name;
+        private short _comment; 
+        private short _time;
+        private short _output_rate;
         #endregion
 
         public  TelegramsOperating _telegram;
@@ -73,6 +85,8 @@ using Brace.Shared.DeviceDrivers.LMS511Laser.Interfaces;
         private event Action LMDscandata_E_CMD;
         private event Action mSCreboot_CMD;
         private event Action mDOSetOutput_CMD;
+        private event Action mLMPsetscancfg_CMD;
+        private event Action LMDscandatacfg_CMD;
         #endregion
 
         #region Contsructors
@@ -106,6 +120,8 @@ using Brace.Shared.DeviceDrivers.LMS511Laser.Interfaces;
                  _telegram.LMDscandata_CMD += new EventHandler<LMDscandataEventArgs>(on_LMDscandata);
                  _telegram.mSCreboot_CMD += new EventHandler<mSCrebootEventArgs>(on_mSCreboot);
                  _telegram.mDOSetOutput_CMD += new EventHandler<mDOSetOutputEventArgs>(on_mDOSetOutput);
+                 _telegram.mLMPsetscancfg_CMD += new EventHandler<mLMPsetscancfgEventArgs>(on_mLMPsetscancfg);
+                 _telegram.LMDscandatacfg_CMD += new EventHandler<LMDscandatacfgEventArgs>(on_LMDscandatacfg);
                  
 
                  Run_CMD = start_Run;
@@ -116,6 +132,8 @@ using Brace.Shared.DeviceDrivers.LMS511Laser.Interfaces;
                  LMDscandata_E_CMD = start_LMDscandata_E;
                  mSCreboot_CMD = start_mSCreboot;
                  mDOSetOutput_CMD = start_mDOSetOutput;
+                 mLMPsetscancfg_CMD = start_mLMPsetscancfg;
+                 LMDscandatacfg_CMD = start_LMDscandatacfg;
                  if ((_laserConfig.TriggerOutputChannelNumber > 0) && (_laserConfig.TriggerOutputChannelNumber < 7))
                      _maskDigitalOutputs = (byte)(1 << (_laserConfig.TriggerOutputChannelNumber-1));
                  else
@@ -139,8 +157,8 @@ using Brace.Shared.DeviceDrivers.LMS511Laser.Interfaces;
                 if (!_started)
                 {
                     methodeList = new List<Action>();
-                    methodeList.Add(SetAccessMode_service_CMD);
-                    methodeList.Add(LSPsetdatetime_CMD);
+                   // methodeList.Add(SetAccessMode_service_CMD);
+                  //  methodeList.Add(LSPsetdatetime_CMD);
                     methodeList.Add(Run_CMD);
                     methodeList.Add(LMDscandata_E_CMD);                   
                     _telegram.ConnectToDevice();                  
@@ -219,9 +237,75 @@ using Brace.Shared.DeviceDrivers.LMS511Laser.Interfaces;
             methodeList.Add(LMDscandata_E_CMD);
             CallNextMethodeFromList();
         }
+        public void SetSetscancfg(uint scan_frequency, uint angle_resolution, int start_angle, int stop_angle)
+        {
+            _scancfg = new ScanCfg();
+            _scancfg.scan_frequency = scan_frequency;
+            _scancfg.angle_resolution = angle_resolution;
+            _scancfg.start_angle = start_angle;
+            _scancfg.stop_angle = stop_angle;
+        }
+        public void Setscancfg()
+        {
+            methodeList = new List<Action>();
+            methodeList.Add(SetAccessMode_service_CMD);
+            methodeList.Add(mLMPsetscancfg_CMD);
+            methodeList.Add(Run_CMD);
+          //  methodeList.Add(LMDscandata_E_CMD);
+            CallNextMethodeFromList();
+        }
 
+        public void Scandata()
+        {
+            methodeList = new List<Action>();            
+            methodeList.Add(Run_CMD);
+            methodeList.Add(LMDscandata_E_CMD);
+            CallNextMethodeFromList();
+        }
+        public void SetSetdatetime(DateTime dt)
+        {
+            _setdatetime = dt;
+        }
+
+        public void Setdatetime()
+        {
+            methodeList = new List<Action>();
+            methodeList.Add(SetAccessMode_service_CMD);
+            methodeList.Add(LSPsetdatetime_CMD);
+            methodeList.Add(Run_CMD);
+           // methodeList.Add(LMDscandata_E_CMD);
+            CallNextMethodeFromList();
+        }
+
+        public void LMDscandatacfg(short outputchannel, int remission, int resolution, int unit, short encoder, short position, short device_name, short comment, short time, short output_rate)
+        {            
+            _outputchannel =  outputchannel;
+            _remission = remission;
+            _resolution = resolution;
+            _unit = unit;
+            _encoder = encoder;
+            _position = position;        
+            _device_name = device_name; 
+            _comment = comment; 
+            _time = time;
+            _output_rate = output_rate;
+        }
+
+        public void Scandatacfg()
+        {
+            methodeList = new List<Action>();
+            methodeList.Add(SetAccessMode_service_CMD);
+            methodeList.Add(LMDscandatacfg_CMD);
+         //   methodeList.Add(Run_CMD);
+            // methodeList.Add(LMDscandata_E_CMD);
+            CallNextMethodeFromList();
+        }
         public event EventHandler<mSCrebootEventArgs>    ReBootEvent = null;
         public event EventHandler<mDOSetOutputEventArgs> DOSetOutputEvent = null;
+        public event EventHandler<mLMPsetscancfgEventArgs> SetConfigEvent = null;
+        public event EventHandler<LMDscandataEventArgs> LMDscandataEvent = null;
+        public event EventHandler<LSPsetdatetimeEventArgs> LSPsetdatetimeEvent = null;
+        public event EventHandler<LMDscandatacfgEventArgs> LMDscandatacfgEvent = null;
         #endregion
 
         #region ITriggerProviderImplementation
@@ -284,14 +368,14 @@ using Brace.Shared.DeviceDrivers.LMS511Laser.Interfaces;
         {           
             if (e.StatusCode == StatusEnum.SUCCESS)
             {
-               _traceWrapper.WriteInformation("LSPsetdatetime : SUCCESS");
+             //  _traceWrapper.WriteInformation("LSPsetdatetime : SUCCESS");               
                 CallNextMethodeFromList();
             }
-            else
+          /*  else
             {
                 _traceWrapper.WriteError("LSPsetdatetime receive failed");
-            }
-            
+            }*/
+            LSPsetdatetimeEvent(this, e);            
         }
         void on_Run(object sender, RunEventArgs e)
         {            
@@ -351,6 +435,10 @@ using Brace.Shared.DeviceDrivers.LMS511Laser.Interfaces;
                         FallingEdge(this, re);
                     }
                 }
+            }
+            if (LMDscandataEvent != null)
+            {
+                LMDscandataEvent(this, e);
             }
 #if SCAN_TEST
             //_traceWrapper.WriteInformation("LMDscandata : receive");
@@ -464,6 +552,34 @@ using Brace.Shared.DeviceDrivers.LMS511Laser.Interfaces;
             CallNextMethodeFromList();
             //     setStatusChange("Reboot : SUCCESS", null);
         }
+
+        public void on_mLMPsetscancfg(object sender, mLMPsetscancfgEventArgs e)
+        {
+            if (e.SetScanCfg.statusCode == SetscancfgEnum.SUCCESS)
+            {
+                if (SetConfigEvent != null)
+                {
+                    SetConfigEvent(this, e);
+                }
+            }
+            else
+                _traceWrapper.WriteInformation("Laser:LMPsetscancfg : ERROR: " + e.SetScanCfg.statusCode.ToString());           
+            CallNextMethodeFromList();
+        }
+        public void on_LMDscandatacfg(object sender, LMDscandatacfgEventArgs e)
+        {
+            if (e.StatusCode == StatusEnum.SUCCESS)
+            {
+                if (LMDscandatacfgEvent != null)
+                {
+                    LMDscandatacfgEvent(this, e);
+                }
+            }
+            else
+                _traceWrapper.WriteInformation("Laser:LMDscandatacfg : ERROR: " + e.StatusCode.ToString());           
+            CallNextMethodeFromList();
+        }
+        
         #endregion
 
         #region Commands sender members
@@ -485,11 +601,10 @@ using Brace.Shared.DeviceDrivers.LMS511Laser.Interfaces;
         }
         void start_LSPsetdatetime()
         {
-            DateTime now = DateTime.Now;           
-            LSPsetdatetime_class sdata = new LSPsetdatetime_class(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second, now.Millisecond);
+           // DateTime now = DateTime.Now;           
+            LSPsetdatetime_class sdata = new LSPsetdatetime_class(_setdatetime.Year, _setdatetime.Month, _setdatetime.Day, _setdatetime.Hour, _setdatetime.Minute, _setdatetime.Second, _setdatetime.Millisecond);
             _telegram.SendCommand(sdata);
         }
-
         void start_Run()
         {
             Run_class sdata = new Run_class();
@@ -506,10 +621,20 @@ using Brace.Shared.DeviceDrivers.LMS511Laser.Interfaces;
             mSCreboot_class sdata = new mSCreboot_class();
             _telegram.SendCommand(sdata);
         }
-
         void start_mDOSetOutput()
         {
             mDOSetOutput_class sdata = new mDOSetOutput_class(_oportNum, _oportStatus);
+            _telegram.SendCommand(sdata);
+        }
+        void start_mLMPsetscancfg()
+        {
+            mLMPsetscancfg_class sdata = new mLMPsetscancfg_class(_scancfg);
+            _telegram.SendCommand(sdata);
+        }
+
+        void start_LMDscandatacfg()
+        {
+            LMDscandatacfg_class sdata = new LMDscandatacfg_class(_outputchannel, _remission, _resolution, _unit, _encoder, _position, _device_name, _comment, _time, _output_rate);
             _telegram.SendCommand(sdata);
         }
         #endregion 
@@ -544,8 +669,10 @@ using Brace.Shared.DeviceDrivers.LMS511Laser.Interfaces;
         {
             if (receive)
             { // receive error and timeout error
+                
                 if (errorMsg != null)
                     ErrorStateCounter.ReceivedSendedErrorMsg = errorMsg;
+                setStatusChange("RECV. ERROR :" + ErrorStateCounter.ReceivedSendedErrorMsg, null); // !!!!!!!!!!!!!!!!!!!!!
                 if (ErrorStateCounter.ReceivedSendedErrorCounterFlag > ErrorStateCounter.LIMITREPEATEDNUMBER)
                 {
                     ErrorStateCounter.ReceivedSendedErrorCounterFlag = 0;
@@ -555,11 +682,14 @@ using Brace.Shared.DeviceDrivers.LMS511Laser.Interfaces;
                 }
                 else
                     ErrorStateCounter.ReceivedSendedErrorCounterFlag++;
+               
             }
             else
             { // Soap error
+                
                 if (errorMsg != null)
                     ErrorStateCounter.SoapErrorMsg = errorMsg;
+                setStatusChange("SOPAS ERROR :" + ErrorStateCounter.SoapErrorMsg, null); // !!!!!!!!!!!!!!!!!!!!!
                 if (ErrorStateCounter.SoapErrorCounterFlag > ErrorStateCounter.LIMITREPEATEDNUMBER)
                 {
                     ErrorStateCounter.SoapErrorCounterFlag = 0;
@@ -569,10 +699,10 @@ using Brace.Shared.DeviceDrivers.LMS511Laser.Interfaces;
                 }
                 else
                     ErrorStateCounter.FullSopasErrorCounter++;
+               
             }
             _telegram.Reconnecting();            
         }
     	#endregion Private members
     }
 }
-//http://www.pool.ntp.org/zone/europe

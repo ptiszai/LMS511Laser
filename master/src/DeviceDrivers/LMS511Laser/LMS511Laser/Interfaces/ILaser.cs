@@ -40,6 +40,33 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser.Interfaces
         void DOOutput();
         void DOSetOutput(int oportNum, int oportStatus);
         event EventHandler<mDOSetOutputEventArgs> DOSetOutputEvent;
+
+        /// <summary>
+        /// Setscancfg, Set frequency and angular resolution
+        /// </summary>
+        void SetSetscancfg(uint scan_frequency, uint angle_resolution, int start_angle, int stop_angle);
+        void Setscancfg();       
+        event EventHandler<mLMPsetscancfgEventArgs> SetConfigEvent;
+
+        /// <summary>
+        /// LMDscandata, Polling one Telegram
+        /// </summary>
+        void Scandata(); 
+        event EventHandler<LMDscandataEventArgs> LMDscandataEvent;
+
+        /// <summary>
+        /// DIO out command for laser devices, ONLY TEST.
+        /// </summary>
+        void Setdatetime();
+        void SetSetdatetime(DateTime dt);
+        event EventHandler<LSPsetdatetimeEventArgs> LSPsetdatetimeEvent;
+
+        /// <summary>
+        /// LMDscandatacfg, Configure the data content for the scan.
+        /// </summary>
+        void LMDscandatacfg(short outputchannel, int remission, int resolution, int unit, short encoder, short position, short device_name, short comment, short time, short output_rate);
+        void Scandatacfg();
+        event EventHandler<LMDscandatacfgEventArgs> LMDscandatacfgEvent;
         /// <summary>
         /// Summa error counter for laser devices, saved in DPU.
         /// </summary>

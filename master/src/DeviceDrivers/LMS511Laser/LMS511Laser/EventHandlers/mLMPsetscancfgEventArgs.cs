@@ -12,37 +12,37 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.*/ 
+along with this program.  If not, see <http://www.gnu.org/licenses/>.*/
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Brace.Shared.DeviceDrivers.LMS511Laser.Enums;
+using Brace.Shared.DeviceDrivers.LMS511Laser.Commands;
 
 namespace Brace.Shared.DeviceDrivers.LMS511Laser.EventHandlers
 {
-    public class mDOSetOutputEventArgs : EventArgs
+    public class mLMPsetscancfgEventArgs : EventArgs
     {
-        /// <summary>
-        /// Status Code
+        /// <summary>        
+        ///  mLMPsetscancfg  : mLMPsetscancfg_R class
         /// </summary>
         /// <remarks>
-        /// 0 no Error
-        /// 1 Success             
-        /// </remarks> 
-        private StatusEnum _statusCode;
-
-        public mDOSetOutputEventArgs(int statusCode)
+        ///  Set frequency and angular resolution
+        /// </remarks>
+        private mLMPsetscancfg_R _setScanCfg;
+        public mLMPsetscancfgEventArgs(mLMPsetscancfg_R setScanCfg)
         {
-            this._statusCode = (StatusEnum)statusCode;
+            this._setScanCfg = setScanCfg;
         }
 
-        public StatusEnum StatusCode
+        public mLMPsetscancfg_R SetScanCfg
         {
             get
             {
-                return _statusCode;
+                return _setScanCfg;
             }
         }
     }

@@ -96,6 +96,10 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser.Enums
         /// <summary>
         /// mSCreboot
         /// </summary>
-        mSCreboot
+        mSCreboot,
+        /// <summary>
+        /// LMDscandatacfg
+        /// </summary>
+        LMDscandatacfg
     }
 }

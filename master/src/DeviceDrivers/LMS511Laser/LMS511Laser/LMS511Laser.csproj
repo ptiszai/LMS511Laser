@@ -80,6 +80,7 @@
     <Compile Include="Commands\LIDoutputstate.cs" />
     <Compile Include="Commands\LIDrstoutpcnt.cs" />
     <Compile Include="Commands\LMDscandata.cs" />
+    <Compile Include="Commands\LMDscandatacfg.cs" />
     <Compile Include="Commands\LMPscancfg.cs" />
     <Compile Include="Commands\LSPsetdatetime.cs" />
     <Compile Include="Commands\mDOSetOutput.cs" />
@@ -92,6 +93,7 @@
     <Compile Include="Driver.cs" />
     <Compile Include="DriverFactory.cs" />
     <Compile Include="Enums\CommandType.cs" />
+    <Compile Include="Enums\SetscancfgEnum.cs" />
     <Compile Include="Enums\StartStopEnum.cs" />
     <Compile Include="Enums\StatusEnum.cs" />
     <Compile Include="ErrorStateCounter.cs" />
@@ -100,10 +102,12 @@
     <Compile Include="EventHandlers\LCMstateEventArgs.cs" />
     <Compile Include="EventHandlers\LIDoutputstateEventArgs.cs" />
     <Compile Include="EventHandlers\LIDrstoutpcnEventArgs.cs" />
+    <Compile Include="EventHandlers\LMDscandatacfgEventArgs.cs" />
     <Compile Include="EventHandlers\LMDscandataEEventArgs.cs" />
     <Compile Include="EventHandlers\LMDscandataEventArgs.cs" />
     <Compile Include="EventHandlers\LSPsetdatetimeEventArgs.cs" />
     <Compile Include="EventHandlers\mDOSetOutputEventArgs.cs" />
+    <Compile Include="EventHandlers\mLMPsetscancfgEventArgs.cs" />
     <Compile Include="EventHandlers\MonitorAttribute.cs" />
     <Compile Include="EventHandlers\mSCrebootEventArgs.cs" />
     <Compile Include="EventHandlers\RunEventArgs.cs" />

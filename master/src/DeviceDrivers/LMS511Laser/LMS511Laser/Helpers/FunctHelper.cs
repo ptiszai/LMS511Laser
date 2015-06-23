@@ -107,6 +107,19 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser.Helpers
         {           
             return Encoding.ASCII.GetBytes(value.ToString("X2"));
         }
+
+        public static byte[] ToBcd(short value)
+        {           
+            byte[] ret = new byte[4];
+            for (int i = 0; i < 4; i++)
+            {
+                ret[i] = (byte)(value % 10);
+                value /= 10;
+                ret[i] |= (byte)((value % 10) << 4);
+                value /= 10;
+            }
+            return ret;
+        }
        
         /// <summary>
         ///  ByteArrayToHexString:  Binary byte value converted to hex ASCII byte.
