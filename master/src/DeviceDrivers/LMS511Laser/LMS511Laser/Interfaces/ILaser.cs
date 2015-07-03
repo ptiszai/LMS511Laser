@@ -1,5 +1,5 @@
 ﻿/* This file is part of *LMS511Laser*.
-Copyright (C) 2015 Tiszai Istvan
+Copyright (C) 2015 Tiszai Istvan, tiszaii@hotmail.com
 
 *program name* is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser.Interfaces
         event EventHandler<LMDscandataEventArgs> LMDscandataEvent;
 
         /// <summary>
-        /// DIO out command for laser devices, ONLY TEST.
+        /// Set Date and Time command for laser devices, ONLY TEST.
         /// </summary>
         void Setdatetime();
         void SetSetdatetime(DateTime dt);
@@ -67,23 +67,30 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser.Interfaces
         void LMDscandatacfg(short outputchannel, int remission, int resolution, int unit, short encoder, short position, short device_name, short comment, short time, short output_rate);
         void Scandatacfg();
         event EventHandler<LMDscandatacfgEventArgs> LMDscandatacfgEvent;
+
         /// <summary>
-        /// Summa error counter for laser devices, saved in DPU.
+        /// DeviceIdent command for laser devices.
+        /// </summary>
+        void DeviceIdent();
+        event EventHandler<DeviceIdentEventArgs> DeviceIdentEvent;
+
+        /// <summary>
+        /// Summa error counter for laser devices, saved in PC.
         /// </summary>
         uint getFullErrorCounter();
 
         /// <summary>
-        /// Summa error counter for laser devices, saved in DPU.
+        /// Summa error counter for laser devices, saved in PC.
         /// </summary>
         uint FullSopasErrorCounter();
 
         /// <summary>
-        /// Summa connected counter for laser devices, saved in DPU.
+        /// Summa connected counter for laser devices, saved in PC.
         /// </summary>
         uint getFullConnectedCounter();
 
         /// <summary>
-        /// Date Time from laser devices,  saved in DPU.
+        /// Date Time from laser devices,  saved in PC.
         /// </summary>
         DateTime getLaserInternalDateTime();
     }

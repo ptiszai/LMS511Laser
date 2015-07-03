@@ -1,5 +1,5 @@
 ﻿/* This file is part of *UnitTest*.
-Copyright (C) 2015 Tiszai Istvan
+Copyright (C) 2015 Tiszai Istvan, tiszaii@hotmail.com
 
 *program name* is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -103,14 +103,10 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser.Test
                 tr.FallingEdge += fhandler;
                 _traceWrapper.WriteInformation("start()");
                 ((IDevice)_devices[0]).Start();
-                Thread.Sleep(3000);              // 10 sec
+                Thread.Sleep(3000);              // 3 sec
                 ((IDevice)_devices[0]).StatusChange -= shandler;
                 tr.RaisingEdge -= rhandler;
-                tr.FallingEdge -= fhandler;
-
-
-
-             
+                tr.FallingEdge -= fhandler;             
             }
         }
 
@@ -209,12 +205,28 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser.Test
                 tr.FallingEdge += fhandler;
                 ((IDevice)_devices[0]).Start();
                 Thread.Sleep(3000);
-                ((ILaser)_devices[0]).DOSetOutput(1, 1);
-                //((ILaser)_devices[0]).DOSetOutput(1, 0);
+                ((ILaser)_devices[0]).DOSetOutput(1, 1);              
                 ((ILaser)_devices[0]).DOOutput();
                 Assert.IsTrue(resetEvent.Wait(TimeSpan.FromMilliseconds(3000)));
                 tr.RaisingEdge -= rhandler;
                 tr.FallingEdge -= fhandler;
+            }
+        }
+
+        [TestMethod()]
+        public void DeviceIdent()
+        {
+            using (var resetEvent = new ManualResetEventSlim(false))
+            {
+                EventHandler<DeviceIdentEventArgs> handler = (sender, e) =>
+                {
+                    _traceWrapper.WriteInformation("DeviceIdent: " + e.IdentInformation);
+                    resetEvent.Set();
+                };
+                ((ILaser)_devices[0]).DeviceIdentEvent += handler;
+                ((IDevice)_devices[0]).Start();               
+                Assert.IsTrue(resetEvent.Wait(TimeSpan.FromMilliseconds(5000)));
+                ((ILaser)_devices[0]).DeviceIdentEvent -= handler;
             }
         }
     }

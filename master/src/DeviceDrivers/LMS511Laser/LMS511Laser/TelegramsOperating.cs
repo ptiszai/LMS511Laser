@@ -1,5 +1,5 @@
 /* This file is part of *LMS511Laser*.
-Copyright (C) 2015 Tiszai Istvan
+Copyright (C) 2015 Tiszai Istvan, tiszaii@hotmail.com
 
 *program name* is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -12,7 +12,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.*/ 
+along with this program.  If not, see <http://www.gnu.org/licenses/>.*/
 
 using System;
 using System.Collections.Generic;
@@ -93,8 +93,7 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser
         /// <summary>
         /// SetAccessMode responde event
         /// </summary>   
-        public event EventHandler<SetAccessModeEventArgs> SetAccessMode_CMD;
-      //  public event Action<SetAccessMode_R> SetAccessMode_CMD;
+        public event EventHandler<SetAccessModeEventArgs> SetAccessMode_CMD;     
         /// <summary>
         /// LCMstate responde event
         /// </summary>
@@ -123,16 +122,6 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser
         /// LMDscandatacfgEventArgs responde event
         /// </summary>
         public event EventHandler<LMDscandatacfgEventArgs> LMDscandatacfg_CMD;
-
-        /* ELKESZULT ELEMEK, KESOBB RAKOM BE, JELENLEG NEM KELL!
-        /// <summary>
-        /// STlms responde event
-        /// </summary>     
-        public event EventHandler<STlmsEventArgs> STlms_CMD;       
-        public event Action<LMPscancfg_R> LMPscancfg_CMD;
-        public event Action<LMPoutputRange_R> LMPoutputRange_CMD;
-        public event Action<LMPoutputRange_get_R> LMPoutputRange_get_CMD;                    
-       */
         #endregion
 
         #region Variable property
@@ -236,19 +225,7 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser
                 { // sFA
                     if (Sopas_Error_CMD != null)
                     {
-                       /* int iTempH, iTempL, iENumber;
-                        if ((_rdatas[1][0] > 0x30) && (_rdatas[1][0] < 0x39))
-                            iTempH = (int)(_rdatas[1][0] - 0x30);
-                        else
-                            iTempH = (int)(_rdatas[1][0] - 55);
-
-                        if ((_rdatas[1][1] > 0x30) && (_rdatas[1][1] < 0x39))
-                            iTempL = (int)(_rdatas[1][1] - 0x30);
-                        else
-                            iTempL = (int)(_rdatas[1][1] - 55);*/
-                        int  iENumber;
-                      //  iENumber = iTempH * 10 + iTempL;
-
+                        int  iENumber;                      
                         byte[] bdata = FunctHelper.ASCIItoByte(_rdatas[1]);
                         iENumber = FunctHelper.ConvertToInt(bdata);
                         iENumber = (iENumber > 26) ? 27 : iENumber;
@@ -258,7 +235,6 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser
                         continue;
                     }
                 }
-
                
                 // LMDscandata  
                 pattern = encoding.GetBytes("LMDscandata");
@@ -269,10 +245,8 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser
                     {
                         if (bScanStart)
                         {
-                            bScanStart = false;
-                         //   readLength = readBytes;
-                        }
-                        // Console.WriteLine("rec:LMDscandata sSN!");
+                            bScanStart = false;                        
+                        }                       
                         if (LMDscandata_CMD != null)
                         {
                             _rbuffer[readBytes - 1] = 0x0;
@@ -284,12 +258,10 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser
                         }
                     }
                     else
-                    {
-                       // readLength = _rbuffer.Length;
+                    {                      
                         pattern = encoding.GetBytes("sRA");
                         if (BytePatternSearch(_rdatas[0], pattern, 0) >= 0)
-                        {
-                            // Console.WriteLine("rec:LMDscandata sRA!");
+                        {                            
                             if (LMDscandata_CMD != null)
                             {
                                 _rbuffer[readBytes - 1] = 0x0;
@@ -301,19 +273,14 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser
                             }
                         }
                         else
-                        {
-                          //  readLength = _rbuffer.Length;
+                        {                         
                             pattern = encoding.GetBytes("sEA");
                             if (BytePatternSearch(_rdatas[0], pattern, 0) >= 0)
-                            {                                
-                                // Console.WriteLine("rec:LMDscandata sEA!");
+                            {                                                               
                                 if (LMDscandataE_CMD != null)
                                 {
-                                    _rbuffer[readBytes - 1] = 0x0;
-                                    //LMDscandata_E_R lmdScandata_e = new LMDscandata_E_R();                                    
-                                    int measurement = (int)_rbuffer[17] - '0';
-                                    //if (lmdScandata_e.measurement == 1)
-                                    //    bScanStart = true;
+                                    _rbuffer[readBytes - 1] = 0x0;                                                                    
+                                    int measurement = (int)_rbuffer[17] - '0';                                    
                                     LMDscandataEEventArgs s = new LMDscandataEEventArgs(measurement);
                                     LMDscandataE_CMD(this, s);
                                     continue;
@@ -331,12 +298,10 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser
                 { // Run
                     pattern = encoding.GetBytes("sAN");
                     if (BytePatternSearch(_rdatas[0], pattern, 0) >= 0)
-                    {
-                        // Console.WriteLine("rec:Run !");
+                    {                        
                         if (Run_CMD != null)
                         {
-                            RunEventArgs s = new RunEventArgs((int)_rbuffer[9] - '0');
-                           // s.runCode = (int)_rbuffer[9] - '0';
+                            RunEventArgs s = new RunEventArgs((int)_rbuffer[9] - '0');                           
                             Run_CMD(this,s);
                             continue;
                         }
@@ -351,12 +316,9 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser
                 { //  SetAccessMode
                     pattern = encoding.GetBytes("sAN");
                     if (BytePatternSearch(_rdatas[0], pattern, 0) >= 0)
-                    {
-                        // Console.WriteLine("rec:Run !");
+                    {                       
                         if (SetAccessMode_CMD != null)
-                        {
-                          //  SetAccessMode_R s = new SetAccessMode_R();
-                          //  s.change_user_level = (int)_rbuffer[19] - '0';
+                        {                          
                             SetAccessModeEventArgs s = new SetAccessModeEventArgs((int)_rdatas[2][0] - '0');
                             SetAccessMode_CMD(this,s);
                             continue;
@@ -373,8 +335,7 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser
                     if (BytePatternSearch(_rdatas[0], pattern, 0) >= 0)
                     {
                         if (LSPsetdatetime_CMD != null)
-                        {
-                            //  _rbuffer[readBytes - 1] = 0x0;                           
+                        {                                                    
                             LSPsetdatetimeEventArgs s = new LSPsetdatetimeEventArgs((int)_rdatas[2][0] - '0');
                             LSPsetdatetime_CMD(this, s);
                             continue;
@@ -465,10 +426,7 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser
                     if (BytePatternSearch(_rdatas[0], pattern, 0) >= 0)
                     {
                         if (LCMstate_CMD != null)
-                        {
-                          //  _rbuffer[readBytes - 1] = 0x0;
-                          //  LCMstate_R s = new LCMstate_R();
-                           // s.statusCode = (int)FunctHelper.ASCCItoByteOne(_rdatas[2][0]); 
+                        {                          
                             LCMstateEventArgs s = new LCMstateEventArgs((int)_rdatas[2][0] - '0'); 
                             LCMstate_CMD(this, s);
                             continue;
@@ -480,12 +438,10 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser
                 // SCdevicestate 
                 pattern = encoding.GetBytes("SCdevicestate");
                 if (BytePatternSearch(_rdatas[1], pattern, 0) >= 0)
-                { // SCdevicestate
-                    // readLength = _rbuffer.Length;
+                { // SCdevicestate                   
                     pattern = encoding.GetBytes("sRA");
                     if (BytePatternSearch(_rdatas[0], pattern, 0) >= 0)
-                    {
-                        // Console.WriteLine("rec:SCdevicestate !");
+                    {                       
                         if (SCdevicestate_CMD != null)
                         {
                             SCdevicestateEventArgs s = new SCdevicestateEventArgs((int)_rbuffer[19] - '0');
@@ -524,8 +480,7 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser
                     if (BytePatternSearch(_rdatas[0], pattern, 0) >= 0)
                     {
                         if (mDOSetOutput_CMD != null)
-                        {
-                          //  _rbuffer[readBytes - 1] = 0x0;                           
+                        {                                                  
                             mDOSetOutputEventArgs s = new mDOSetOutputEventArgs((int)_rdatas[2][0] - '0');                            
                             mDOSetOutput_CMD(this, s);
                             continue;
@@ -571,11 +526,9 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser
                 // DeviceIdent          
                 pattern = encoding.GetBytes("sRA");
                 if (BytePatternSearch(_rdatas[0], pattern, 0) >= 0)
-                {
-                    // readLength = _rbuffer.Length;
+                {                   
                     if (_rbuffer[5] == 0x30)
-                    {
-                        // Console.WriteLine("rec:SCdevicestate !");
+                    {                       
                         if (DeviceIdent_CMD != null)
                         {
                             _rbuffer[readBytes - 1] = 0x0;
@@ -583,9 +536,7 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser
                             DeviceIdent_CMD(this, s);
                             continue;
                         }
-                    }
-                    // else
-                    //    throw new Exception("ERROR Laser: rec:DeviceIdent is bad 1!");
+                    }                   
                 }
                 // LMDscandatacfg
                 pattern = encoding.GetBytes("LMDscandatacfg");

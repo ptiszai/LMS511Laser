@@ -43,7 +43,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Debug\</OutputPath>
+    <OutputPath>..\..\..\output\x86\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -62,7 +62,7 @@
   <ItemGroup>
     <Reference Include="Shared.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=c750f15d9a5fcb8b, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Core\bin\x86\Debug\Shared.Core.dll</HintPath>
+      <HintPath>..\..\..\output\x86\Shared.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>

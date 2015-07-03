@@ -1,5 +1,5 @@
 ﻿/* This file is part of *Trace*.
-Copyright (C) 2015 Tiszai Istvan
+Copyright (C) 2015 Tiszai Istvan, tiszaii@hotmail.com
 
 *program name* is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -59,7 +59,6 @@ namespace Brace.Shared.Diagnostics.Trace
             WriteTrace(TraceEventType.Information, message, categories);
         }
 
-
         public void WriteVerbose(string message)
         {
             WriteTrace(TraceEventType.Verbose, message);
@@ -69,7 +68,6 @@ namespace Brace.Shared.Diagnostics.Trace
         {
             WriteTrace(TraceEventType.Verbose, message, categories);
         }
-
 
         public void WriteWarning(string message)
         {
