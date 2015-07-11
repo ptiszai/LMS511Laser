@@ -43,6 +43,10 @@ namespace Brace.Shared.Core.Interfaces
         /// </summary>
         void Stop();
 
+        /// Re-boot the device driver
+        /// </summary>
+        void Reboot();
+
         /// <summary>
         /// Return all monitored attribute value
         /// </summary>
@@ -53,5 +57,6 @@ namespace Brace.Shared.Core.Interfaces
         /// Return monitored attribute value changes
         /// </summary>
         event EventHandler<StatusChangeEventArgs> StatusChange;
+        
     }
 }

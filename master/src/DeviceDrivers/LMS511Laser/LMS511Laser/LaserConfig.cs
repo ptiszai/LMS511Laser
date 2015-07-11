@@ -35,7 +35,7 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser
             /// <summary>
             /// IP address string
             /// </summary>
-            public string IPAdrress { get; set; }
+            public string IPAddress { get; set; }
             /// <summary>
             /// Port number integer
             /// </summary>
@@ -67,7 +67,7 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser
             ///  <remarks> 
             ///  numver is may be 1 - 6.
             ///  </remarks>  
-            public int TriggerOutputChannelNumber { get; set; } 
+            public int TriggerOutputChannelNumber { get; set; }            
             #endregion
 
             #region  public methodes
@@ -88,8 +88,7 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser
             /// </remarks>   
             public void SetDefaults()
             {
-                IPAdrress = "192.168.0.66";
-             //   port = 2111; // or 2112
+                IPAddress = "192.168.0.66";            
                 PWD_maintenance = 0xB21ACE26;
                 PWD_authorized_client = 0xF4724744;
                 PWD_service = 0x81BE23AA;

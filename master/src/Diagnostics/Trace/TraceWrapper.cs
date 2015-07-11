@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.*/
 namespace Brace.Shared.Diagnostics.Trace
 {
     using Microsoft.Practices.EnterpriseLibrary.Logging;
+    using Microsoft.Practices.EnterpriseLibrary.Common.Configuration;
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
@@ -43,7 +44,6 @@ namespace Brace.Shared.Diagnostics.Trace
             WriteInformation(string.Format("Trace engine (version {0}) initialized. {1}", myFileVersionInfo.FileVersion, logWriterMessage));
         }
 		
-
         public TraceWrapper(LogWriter logWriter) : base()
         {
             this.logWriter = logWriter;

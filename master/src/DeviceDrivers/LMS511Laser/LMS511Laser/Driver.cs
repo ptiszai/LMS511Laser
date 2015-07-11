@@ -13,8 +13,7 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.*/
-//mEEwriteall,LMCstartmeas,LMCstopmeas, LMLfpFcn,mSCloadfacdef
-//#define SCAN_TEST
+
 namespace Brace.Shared.DeviceDrivers.LMS511Laser
 {
 using Brace.Shared.Core.Classes;
@@ -25,6 +24,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
+using System.Timers;
 using Brace.Shared.Diagnostics.Trace;
 using Brace.Shared.DeviceDrivers.LMS511Laser.EventHandlers;
 using Brace.Shared.DeviceDrivers.LMS511Laser.Commands;
@@ -33,9 +33,9 @@ using Brace.Shared.DeviceDrivers.LMS511Laser.Counters;
 using Brace.Shared.DeviceDrivers.LMS511Laser.Helpers;
 using Brace.Shared.DeviceDrivers.LMS511Laser.Interfaces;
 
-    internal class Driver : IDevice, ITriggerProvider, ILaser
+    internal class Driver : IDevice, ITriggerProvider, ILaser, IScanDataReceiver
     {
-        #region Variable private
+        #region Variables private
         private TraceWrapper _traceWrapper;      
         private bool _isInitialized;
         private LaserConfig _laserConfig;       
@@ -65,18 +65,17 @@ using Brace.Shared.DeviceDrivers.LMS511Laser.Interfaces;
         private short _comment; 
         private short _time;
         private short _output_rate;
+        // TEST BEGIN
+       // private Timer timer = new Timer();
+        // TEST END
         #endregion
-
+        #region Variables public
         public  TelegramsOperating _telegram;
-
-        #region EventHandler part
-        /// <summary>
-        /// StatusChange event
-        /// </summary>       
-        public event EventHandler<StatusChangeEventArgs> StatusChange;
         #endregion
-
-        #region Action part 
+        #region IScanDataReceiver implementation
+        public event EventHandler<ScanDataEventArgs> ScanDataEvent;
+        #endregion
+        #region Action part
         private event Action Run_CMD;
         private event Action SetAccessMode_client_CMD;
         private event Action SetAccessMode_maintenance_CMD;
@@ -99,33 +98,34 @@ using Brace.Shared.DeviceDrivers.LMS511Laser.Interfaces;
         }
         #endregion
         #region IDevice implementation
-     
+        public event EventHandler<StatusChangeEventArgs> StatusChange;  
         public void Initialize(string configuration, TraceWrapper traceWrapper)
         {
             try 
-            {
+            {                
+                _laserConfig = LaserConfig.LoadFromXml<LaserConfig>(configuration);
                 _traceWrapper = traceWrapper;
+
                 _traceWrapper.WriteInformation("Laser initialization start.");
                 _traceWrapper.WriteVerbose(string.Format("Configuration: {0}", configuration));
-                _laserConfig = LaserConfig.LoadFromXml<LaserConfig>(configuration);
-                _telegram = new TelegramsOperating(_laserConfig.IPAdrress, 2111, traceWrapper);
-                 _telegram.ConnectingSuccessed += new ConnectingSuccessedEventHandler(on_ConnectingSuccessed);
-                 _telegram.ConnectingFailed += new ConnectingFailedEventHandler(on_ConnectingFailed);
-                 _telegram.CommandReceivingFailed += new CommandReceivingFailedEventHandler(on_CommandReceivingFailed);
-                 _telegram.CommandSendingFailed += new CommandSendingFailedEventHandler(on_CommandSendingFailed);
-                 _telegram.Sopas_Error_CMD += new EventHandler<SopasErrorEventArgs>(on_SopasError); 
-                 _telegram.SetAccessMode_CMD += new EventHandler<SetAccessModeEventArgs>(on_SetAccessMode);
-                 _telegram.LSPsetdatetime_CMD += new EventHandler<LSPsetdatetimeEventArgs>(on_LSPsetdatetime);
-                 _telegram.Run_CMD += new EventHandler<RunEventArgs>(on_Run);
-                 _telegram.LMDscandataE_CMD += new EventHandler<LMDscandataEEventArgs>(on_LMDscandataE);
-                 _telegram.LMDscandata_CMD += new EventHandler<LMDscandataEventArgs>(on_LMDscandata);
-                 _telegram.mSCreboot_CMD += new EventHandler<mSCrebootEventArgs>(on_mSCreboot);
-                 _telegram.mDOSetOutput_CMD += new EventHandler<mDOSetOutputEventArgs>(on_mDOSetOutput);
-                 _telegram.mLMPsetscancfg_CMD += new EventHandler<mLMPsetscancfgEventArgs>(on_mLMPsetscancfg);
-                 _telegram.LMDscandatacfg_CMD += new EventHandler<LMDscandatacfgEventArgs>(on_LMDscandatacfg);
-                 _telegram.DeviceIdent_CMD += new EventHandler<DeviceIdentEventArgs>(on_DeviceIdent);
-                 
 
+                _telegram = new TelegramsOperating(_laserConfig.IPAddress, 2111, traceWrapper);
+                _telegram.ConnectingSuccessed += new ConnectingSuccessedEventHandler(on_ConnectingSuccessed);
+                _telegram.ConnectingFailed += new ConnectingFailedEventHandler(on_ConnectingFailed);
+                _telegram.CommandReceivingFailed += new CommandReceivingFailedEventHandler(on_CommandReceivingFailed);
+                _telegram.CommandSendingFailed += new CommandSendingFailedEventHandler(on_CommandSendingFailed);
+                _telegram.Sopas_Error_CMD += new EventHandler<SopasErrorEventArgs>(on_SopasError); 
+                _telegram.SetAccessMode_CMD += new EventHandler<SetAccessModeEventArgs>(on_SetAccessMode);
+                _telegram.LSPsetdatetime_CMD += new EventHandler<LSPsetdatetimeEventArgs>(on_LSPsetdatetime);
+                _telegram.Run_CMD += new EventHandler<RunEventArgs>(on_Run);
+                _telegram.LMDscandataE_CMD += new EventHandler<LMDscandataEEventArgs>(on_LMDscandataE);
+                _telegram.LMDscandata_CMD += new EventHandler<LMDscandataEventArgs>(on_LMDscandata);
+                _telegram.mSCreboot_CMD += new EventHandler<mSCrebootEventArgs>(on_mSCreboot);
+                _telegram.mDOSetOutput_CMD += new EventHandler<mDOSetOutputEventArgs>(on_mDOSetOutput);
+                _telegram.mLMPsetscancfg_CMD += new EventHandler<mLMPsetscancfgEventArgs>(on_mLMPsetscancfg);
+                _telegram.LMDscandatacfg_CMD += new EventHandler<LMDscandatacfgEventArgs>(on_LMDscandatacfg);
+                _telegram.DeviceIdent_CMD += new EventHandler<DeviceIdentEventArgs>(on_DeviceIdent);
+                 
                  Run_CMD = start_Run;
                  SetAccessMode_client_CMD = start_SetAccessMode_client;
                  SetAccessMode_maintenance_CMD = start_SetAccessMode_maintenance;
@@ -159,13 +159,28 @@ using Brace.Shared.DeviceDrivers.LMS511Laser.Interfaces;
                 {
                     methodeList = new List<Action>();
                     methodeList.Add(DeviceIdent_CMD);
-                   // methodeList.Add(SetAccessMode_service_CMD);
-                  //  methodeList.Add(LSPsetdatetime_CMD);
+                    methodeList.Add(SetAccessMode_service_CMD);
+                    methodeList.Add(LSPsetdatetime_CMD);
                     methodeList.Add(Run_CMD);
                     methodeList.Add(LMDscandata_E_CMD);                   
                     _telegram.ConnectToDevice();                  
                     ErrorStateCounter.ClearCounterFlags();
                     _started = true;
+                    // TEST BEGIN           
+                  /*  timer.Interval = 50;
+                    timer.Elapsed += (sender, e) =>
+                    {*/
+                        /*
+                        LMDscandata_R _scanDataObject = new LMDscandata_R();
+                        LMDscandataEventArgs _scandata = new LMDscandataEventArgs(_scanDataObject);
+                        on_LMDscandata(null, _scandata);
+                        ((Timer)sender).Enabled = true;   */
+                        /*
+                        mSCrebootEventArgs _reboot = new mSCrebootEventArgs(DateTime.Now);
+                        on_mSCreboot(null, _reboot);*/
+                //    };
+                   // timer.Enabled = true;
+                    // TEST END
                 }
             }
             else
@@ -176,7 +191,7 @@ using Brace.Shared.DeviceDrivers.LMS511Laser.Interfaces;
 
         public void Stop()
         {
-            if (!_isInitialized)
+            if (_isInitialized)
             {
                 _telegram.Disconnect();
                 methodeList = null;
@@ -186,6 +201,14 @@ using Brace.Shared.DeviceDrivers.LMS511Laser.Interfaces;
             {
                 throw new InvalidOperationException();
             }         
+        }
+
+        public void Reboot()
+        {
+            if (_isInitialized && _started)
+            {
+                start_mSCreboot();
+            }
         }
 
         public IDeviceStatus GetDeviceStatus()
@@ -320,7 +343,7 @@ using Brace.Shared.DeviceDrivers.LMS511Laser.Interfaces;
         public event EventHandler<DeviceIdentEventArgs> DeviceIdentEvent = null;
         #endregion
 
-        #region ITriggerProviderImplementation
+        #region ITriggerProvider implementation
         public event EventHandler<RaisingEdgeEventArgs> RaisingEdge = null;
         public event EventHandler<FallingEdgeEventArgs> FallingEdge = null;        
         #endregion
@@ -339,13 +362,11 @@ using Brace.Shared.DeviceDrivers.LMS511Laser.Interfaces;
             methodeListIndex = 0;                 
             CallNextMethodeFromList();        
         }
-
         void on_ConnectingFailed(object sender, MessageEventArgs e)
         {
              errorControl(true, e.Msg);         
             _traceWrapper.WriteError(e.Msg);
         }
-
         void on_CommandSendingFailed(object sender, MessageEventArgs e)
         {
             errorControl(true, e.Msg);
@@ -441,14 +462,72 @@ using Brace.Shared.DeviceDrivers.LMS511Laser.Interfaces;
                 {
                     if (FallingEdge != null)
                     {
-                        FallingEdgeEventArgs re = new FallingEdgeEventArgs(true, getLaserInternalDateTime());
-                        FallingEdge(this, re);
+                        FallingEdgeEventArgs _fallingEvent = new FallingEdgeEventArgs(true, getLaserInternalDateTime());
+                        FallingEdge(this, _fallingEvent);
                     }
                 }
             }
-            if (LMDscandataEvent != null)
+            if (ScanDataEvent != null)
             {
-                LMDscandataEvent(this, e);
+                ScanData _scandata = new ScanData();
+                _scandata.versionNumber = e.ScanData.versionNumber;
+                _scandata.deviceNumber = e.ScanData.deviceNumber;
+                _scandata.serialNumber = e.ScanData.serialNumber;
+                _scandata.deviceStatus = e.ScanData.deviceStatus;
+                _scandata.telegramCounter = e.ScanData.telegramCounter;
+                _scandata.scanCounter = e.ScanData.scanCounter;
+                _scandata.timeSinceStartUp = e.ScanData.timeSinceStartUp;
+                _scandata.timeOfTransmission = e.ScanData.timeOfTransmission;
+                _scandata.statusOfDigitalInputs = e.ScanData.statusOfDigitalInputs;
+                _scandata.statusOfDigitalOutputs = e.ScanData.statusOfDigitalOutputs;
+                _scandata.scanFrequency = e.ScanData.scanFrequency;
+                _scandata.measurementFrequency = e.ScanData.measurementFrequency;
+                _scandata.amountOfEncoder = e.ScanData.amountOfEncoder;
+                _scandata.encoderPosition = e.ScanData.encoderPosition;
+                _scandata.encoderSpeed = e.ScanData.encoderSpeed;
+                _scandata.amountOf16BitChannels = e.ScanData.amountOf16BitChannels;
+                _scandata.content16 = e.ScanData.content16;
+                _scandata.scaleFactor16 = e.ScanData.scaleFactor16;
+                _scandata.scaleFactorOffset16 = e.ScanData.scaleFactorOffset16;
+                _scandata.startAngle16 = e.ScanData.startAngle16;
+                _scandata.steps16 = e.ScanData.steps16;
+                _scandata.amountOfData16 = e.ScanData.amountOfData16;
+               
+            /*    _scandata.data16 = new ushort[_scandata.amountOfData16];
+                for (int ii = 0; ii < _scandata.amountOfData16; ii++)
+                {
+                    _scandata.data16[ii] = e.ScanData.data16[ii];
+                }*/
+
+                _scandata.amountOf8BitChannels = e.ScanData.amountOf8BitChannels;
+                _scandata.content8 = e.ScanData.content8;
+                _scandata.scaleFactor8 = e.ScanData.scaleFactor8;
+                _scandata.scaleFactorOffset8 = e.ScanData.scaleFactorOffset8;
+                _scandata.startAngle8 = e.ScanData.startAngle8;
+                _scandata.steps8 = e.ScanData.steps8;
+                _scandata.amountOfData8 = e.ScanData.amountOfData8;
+               
+             /*   _scandata.data8 = new byte[_scandata.amountOfData8];
+                for (int ii = 0; ii < _scandata.amountOfData8; ii++)
+                {
+                    _scandata.data8[ii] = e.ScanData.data8[ii];
+                }*/
+
+                _scandata.position = e.ScanData.position;
+                _scandata.nameMode = e.ScanData.nameMode;
+                _scandata.nameLength = e.ScanData.nameLength;
+                _scandata.name = e.ScanData.name;
+                _scandata.comment = e.ScanData.comment;
+                _scandata.timeMode = e.ScanData.timeMode;
+                _scandata.timeYear = e.ScanData.timeYear;
+                _scandata.timeMonth = e.ScanData.timeMonth;
+                _scandata.timeDay = e.ScanData.timeDay;
+                _scandata.timeHour = e.ScanData.timeHour;
+                _scandata.timeMinute = e.ScanData.timeMinute;
+                _scandata.timeSecund = e.ScanData.timeSecund;
+                _scandata.timeUsecund = e.ScanData.timeUsecund;
+                ScanDataEventArgs _scandataEvent = new ScanDataEventArgs(_scandata, DateTime.Now);
+                ScanDataEvent(this, _scandataEvent);
             }
 #if SCAN_TEST
             //_traceWrapper.WriteInformation("LMDscandata : receive");
@@ -596,8 +675,7 @@ using Brace.Shared.DeviceDrivers.LMS511Laser.Interfaces;
                 DeviceIdentEvent(this, e);
             }
             CallNextMethodeFromList();
-        }
-        
+        }        
         #endregion
 
         #region Commands sender members
@@ -637,6 +715,7 @@ using Brace.Shared.DeviceDrivers.LMS511Laser.Interfaces;
         {
             mSCreboot_class sdata = new mSCreboot_class();
             _telegram.SendCommand(sdata);
+         //   timer.Enabled = true;
         }
         void start_mDOSetOutput()
         {
@@ -693,7 +772,7 @@ using Brace.Shared.DeviceDrivers.LMS511Laser.Interfaces;
                 
                 if (errorMsg != null)
                     ErrorStateCounter.ReceivedSendedErrorMsg = errorMsg;
-                setStatusChange("RECV. ERROR :" + ErrorStateCounter.ReceivedSendedErrorMsg, null); // !!!!!!!!!!!!!!!!!!!!!
+                setStatusChange("RECV. ERROR :" + ErrorStateCounter.ReceivedSendedErrorMsg, null); 
                 if (ErrorStateCounter.ReceivedSendedErrorCounterFlag > ErrorStateCounter.LIMITREPEATEDNUMBER)
                 {
                     ErrorStateCounter.ReceivedSendedErrorCounterFlag = 0;
@@ -710,7 +789,7 @@ using Brace.Shared.DeviceDrivers.LMS511Laser.Interfaces;
                 
                 if (errorMsg != null)
                     ErrorStateCounter.SoapErrorMsg = errorMsg;
-                setStatusChange("SOPAS ERROR :" + ErrorStateCounter.SoapErrorMsg, null); // !!!!!!!!!!!!!!!!!!!!!
+                setStatusChange("SOPAS ERROR :" + ErrorStateCounter.SoapErrorMsg, null); 
                 if (ErrorStateCounter.SoapErrorCounterFlag > ErrorStateCounter.LIMITREPEATEDNUMBER)
                 {
                     ErrorStateCounter.SoapErrorCounterFlag = 0;

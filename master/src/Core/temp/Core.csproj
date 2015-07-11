@@ -55,7 +55,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\..\output\x86\</OutputPath>
+    <OutputPath>bin\x86\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -86,16 +86,14 @@
     </Compile>
     <Compile Include="Classes\BaseDeviceConfiguration.cs" />
     <Compile Include="Classes\FallingEdgeEventArgs.cs" />
+    <Compile Include="Classes\MeasuredSpeedEventArgs.cs" />
     <Compile Include="Classes\RaisingEdgeEventArgs.cs" />
-    <Compile Include="Classes\ScanData.cs" />
-    <Compile Include="Classes\ScanDataEventArgs.cs" />
-    <Compile Include="Classes\SetOrGetIniFile.cs" />
     <Compile Include="Enums\MonitoredAttribute.cs" />
     <Compile Include="Classes\StatusChangeEventArgs.cs" />
     <Compile Include="Interfaces\IDevice.cs" />
     <Compile Include="Interfaces\IDeviceStatus.cs" />
+    <Compile Include="Interfaces\IMeasuredSpeedProvider.cs" />
     <Compile Include="Interfaces\IMonitoredAttributeValue.cs" />
-    <Compile Include="Interfaces\IScanDataReceiver.cs" />
     <Compile Include="Interfaces\ISerializer.cs" />
     <Compile Include="Interfaces\ITriggerProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

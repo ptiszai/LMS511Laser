@@ -166,10 +166,9 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser
                 OnNetworkAlived(new MessageEventArgs("Laser network is ALIVE!"));
         }
 
-       private void StartReceive(object sender , DoWorkEventArgs e)
+       private void StartReceive(object sender, DoWorkEventArgs e)
         {
-            byte[] pattern;
-           // int readLength = _rbuffer.Length;
+            byte[] pattern;          
             bool bScanStart = false;
            int readBytes;
            int ii = 0;
@@ -291,7 +290,6 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser
                         }
                     }
                 }
-
                 // Run 
                 pattern = encoding.GetBytes("Run");
                 if (BytePatternSearch(_rdatas[1], pattern, 0) >= 0)
@@ -309,7 +307,6 @@ namespace Brace.Shared.DeviceDrivers.LMS511Laser
                     else
                         throw new Exception("ERROR Laser: rec:Run is bad!");
                 }
-
                 // SetAccessMode 
                 pattern = encoding.GetBytes("SetAccessMode");
                 if (BytePatternSearch(_rdatas[1], pattern, 0) >= 0)
