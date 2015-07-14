@@ -2,7 +2,7 @@
 SICK LMS511 laser driver
  About
 -------
-LMS511Laser is a SICk LMS 511 Pro Laser device driver package in Windows OS, Windows7, Windows 8.1. 
+LMS511Laser is a SICK LMS 511 Pro Laser device driver package in Windows OS, Windows7, Windows 8.1. 
 Device technical details:
 https://www.sick.com/de/en/detection-and-ranging-solutions/2d-laser-scanners/lms5xx/lms511-10100-pro/p/p215941
 
